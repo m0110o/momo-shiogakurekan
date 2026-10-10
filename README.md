@@ -1,14 +1,1 @@
-momo-shiogakurekan/
-    index.html
-    player.png
-    修.png
-    伊織.png
-    烈.png
-    hotel_day
-    hotel_night
-    lobby.jpeg
-    onsen_day.jpeg
-    onsen_night.jpeg
-    player_yukata.png
-    room.jepg
-    town_map.jpeg
+
