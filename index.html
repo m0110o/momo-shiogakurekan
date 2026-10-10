@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>momo｜汐隱館</title>
+<style>
+:root{--ink:#f8f1e9;--muted:#cbbdb5;--gold:#d9b87c;--wine:#7b2839;--wine2:#a94c5d;--panel:rgba(24,18,23,.91);--line:rgba(233,205,160,.25);--sea:#557e8b}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#0d0a0d;color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC",sans-serif;overflow:hidden}
+button,input{font:inherit}button{cursor:pointer}
+#app{height:100%;position:relative}
+.screen{position:absolute;inset:0;display:none}
+.screen.active{display:block}
+#title{background:radial-gradient(circle at 50% 25%,rgba(183,110,72,.24),transparent 35%),linear-gradient(145deg,#120c10,#28161d 55%,#0d0b0f);overflow:hidden}
+.title-orn{position:absolute;inset:-20%;background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.45) 72%);pointer-events:none}
+.title-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(820px,92vw);text-align:center;padding:42px 30px;border:1px solid var(--line);background:rgba(18,12,16,.58);backdrop-filter:blur(10px);box-shadow:0 30px 80px #0009;border-radius:22px}
+.logo{font-family:serif;font-size:clamp(54px,9vw,100px);letter-spacing:.18em;margin:0 0 4px;text-shadow:0 4px 30px #000}
+.sub{color:#dcc6a9;letter-spacing:.35em;font-size:13px}.tagline{margin:28px auto 30px;max-width:560px;line-height:1.9;color:#e8ddd5}
+.primary{border:1px solid #d9b87c99;background:linear-gradient(180deg,#a94c5d,#67202f);color:white;padding:13px 28px;border-radius:999px;box-shadow:0 10px 25px #0007}
+.secondary{border:1px solid var(--line);background:#ffffff0b;color:var(--ink);padding:10px 16px;border-radius:12px}
+.namebox{display:none;margin:18px auto 0;max-width:340px}.namebox input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0005;color:white}.namebox button{margin-top:10px}
+#game{background:#100d10}
+.topbar{height:64px;display:flex;align-items:center;gap:12px;padding:8px 14px;background:#171116eF;border-bottom:1px solid var(--line);position:relative;z-index:10}
+.brand{font-family:serif;font-size:21px;letter-spacing:.14em;white-space:nowrap}.date{font-size:13px;color:#dfcdbd;white-space:nowrap}.clock{font-variant-numeric:tabular-nums;color:#fff}.spacer{flex:1}
+.pill{padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff8;font-size:12px}
+.layout{height:calc(100% - 64px);display:grid;grid-template-columns:260px 1fr 300px;min-height:0}
+.sidebar,.rightbar{background:#151016;border-right:1px solid var(--line);overflow:auto}.rightbar{border-right:0;border-left:1px solid var(--line);padding:14px}
+.side-section{padding:14px;border-bottom:1px solid #ffffff10}.side-title{font-size:12px;color:#bfaea4;letter-spacing:.14em;margin-bottom:9px}
+.stat{margin:9px 0}.statrow{display:flex;justify-content:space-between;font-size:12px;color:#d8cbc3}.meter{height:6px;border-radius:10px;background:#ffffff10;overflow:hidden;margin-top:5px}.meter i{display:block;height:100%;background:linear-gradient(90deg,#8c3949,#d6b77b);border-radius:10px}
+.navgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.navbtn{padding:10px 7px;border:1px solid #ffffff10;background:#ffffff06;color:#eee;border-radius:10px;font-size:12px}.navbtn.active{border-color:#d9b87c66;background:#d9b87c12;color:#f2d7a7}
+.scene{position:relative;overflow:hidden;background:#1a1518}
+.scene-bg{position:absolute;inset:0;background-position:center;background-size:cover;filter:saturate(.88) brightness(.83);transition:background-image .4s,filter .3s}
+.scene-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#09060a22 0%,transparent 40%,#0b080c88 100%)}
+.scene-ui{position:absolute;inset:0;pointer-events:none}
+.place-title{position:absolute;left:22px;top:18px;background:#130e14c9;border:1px solid var(--line);padding:10px 14px;border-radius:12px;backdrop-filter:blur(6px)}.place-title b{display:block;font-family:serif;font-size:23px}.place-title span{font-size:10px;color:#c6b7ae;letter-spacing:.15em}
+.world{position:absolute;inset:0;pointer-events:none}.actor{position:absolute;transform:translate(-50%,-100%);width:92px;pointer-events:auto;filter:drop-shadow(0 10px 8px #0007);transition:left .12s linear,top .12s linear}.actor.player{width:82px;z-index:6}.actor.npc{width:88px;z-index:5}.actor img{width:100%;height:auto;display:block}.actor .name{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);white-space:nowrap;background:#150f14dd;border:1px solid #ffffff15;border-radius:999px;padding:3px 8px;font-size:11px}.actor.near{filter:drop-shadow(0 0 12px #e7c47b)}
+.controlhint{position:absolute;bottom:18px;left:18px;background:#100c11b8;border:1px solid #ffffff14;padding:9px 11px;border-radius:11px;color:#d7cbc4;font-size:11px;pointer-events:none}
+.actionbar{position:absolute;bottom:16px;right:18px;display:flex;gap:7px;pointer-events:auto}.actionbar button{background:#171116df;color:#f5eae1;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:12px}.panel h3{font-family:serif;font-size:18px;margin:0 0 10px}.panel p{font-size:12px;line-height:1.75;color:#d4c7c0;margin:7px 0}.log{max-height:230px;overflow:auto}.log p{padding-bottom:8px;border-bottom:1px solid #ffffff08}.log time{color:#b99868;margin-right:7px;font-size:10px}
+.event-card{border-left:3px solid var(--gold);padding-left:10px}.event-card b{display:block;margin-bottom:4px}.clue{color:#dfc78e!important}
+.modal{position:absolute;inset:0;background:#070508a6;display:none;align-items:center;justify-content:center;z-index:30;padding:20px}.modal.show{display:flex}.dialog{width:min(700px,94vw);max-height:88vh;overflow:auto;background:#171117;border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 90px #000c}.dialog-head{display:flex;gap:14px;padding:18px;border-bottom:1px solid #ffffff10}.portrait{width:95px;height:125px;object-fit:contain;object-position:center bottom;align-self:flex-end}.dialog-head h2{font-family:serif;margin:0 0 6px}.dialog-body{padding:18px;line-height:1.9;color:#e7ddd7}.choices{display:grid;gap:8px;padding:0 18px 18px}.choice{padding:11px 13px;text-align:left;background:#ffffff07;border:1px solid #ffffff14;color:#eee;border-radius:10px}.choice:hover{border-color:#d9b87c77;background:#d9b87c0c}
+.map-modal .dialog{width:min(1000px,96vw)}.map-img{width:100%;display:block;border-radius:12px}.map-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}.map-actions button{padding:9px 5px;background:#fff7;border:1px solid #ffffff15;color:#eee;border-radius:9px;font-size:11px}
+.toast{position:absolute;left:50%;bottom:25px;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;z-index:50;background:#171116ee;border:1px solid var(--line);padding:10px 15px;border-radius:999px;transition:.25s;font-size:12px}.toast.show{opacity:1;transform:translateX(-50%)}
+.mobilebar{display:none}
+@media(max-width:1050px){.layout{grid-template-columns:220px 1fr}.rightbar{display:none}}
+@media(max-width:760px){.topbar{height:58px}.layout{height:calc(100% - 58px);display:block}.sidebar{display:none}.scene{height:100%}.mobilebar{display:flex;position:absolute;left:10px;right:10px;bottom:9px;z-index:15;background:#130e14e8;border:1px solid var(--line);border-radius:15px;padding:6px;gap:5px;backdrop-filter:blur(10px)}.mobilebar button{flex:1;background:#fff7;border:0;color:#eee;padding:8px 3px;border-radius:10px;font-size:10px}.brand{font-size:17px}.date{font-size:11px}.pill{display:none}.place-title{top:10px;left:10px}.place-title b{font-size:19px}.actor{width:74px}.actor.player{width:70px}.actionbar{bottom:70px;right:10px}.actionbar button{padding:8px 9px}.controlhint{bottom:70px;left:10px}.dialog-head{padding:13px}.portrait{width:75px;height:105px}}
+</style>
+</head>
+<body>
+<div id="app">
+<section id="title" class="screen active">
+ <div class="title-orn"></div>
+ <div class="title-card">
+  <div class="sub">MOMO PROJECT · LIFE SIMULATION</div>
+  <h1 class="logo">汐隱館</h1>
+  <div class="sub">SHIOGAKUREKAN</div>
+  <p class="tagline">一座臨海旅館、一個不急著揭開的祕密。<br>在送潮祭前的二十一天裡，住下來，生活，探索，與每個人擦肩而過。</p>
+  <button class="primary" id="startBtn">開啟旅程</button>
+  <div class="namebox" id="namebox">
+   <input id="nameInput" maxlength="12" placeholder="輸入你的名字（預設：Momo）">
+   <button class="primary" id="confirmName">入住汐隱館</button>
+  </div>
+  <p style="font-size:11px;color:#8e7f78;margin-top:24px">9月20日 15:30 · 月代町</p>
+ </div>
+</section>
+
+<section id="game" class="screen">
+ <div class="topbar">
+  <div class="brand">汐隱館</div><div class="date" id="dateText">9月20日</div><div class="clock" id="clock">15:30</div>
+  <div class="spacer"></div><div class="pill" id="money">¥ 12,000</div><div class="pill" id="eventPill">今日事件：初湯迎客</div>
+  <button class="secondary" id="saveBtn">保存</button>
+ </div>
+ <div class="layout">
+  <aside class="sidebar">
+   <div class="side-section"><div class="side-title">旅人狀態</div>
+    <div class="stat"><div class="statrow"><span>體力</span><b id="energyVal">90</b></div><div class="meter"><i id="energyBar" style="width:90%"></i></div></div>
+    <div class="stat"><div class="statrow"><span>飽足</span><b id="hungerVal">75</b></div><div class="meter"><i id="hungerBar" style="width:75%"></i></div></div>
+    <div class="stat"><div class="statrow"><span>清潔</span><b id="cleanVal">85</b></div><div class="meter"><i id="cleanBar" style="width:85%"></i></div></div>
+    <div class="stat"><div class="statrow"><span>心情</span><b id="moodVal">80</b></div><div class="meter"><i id="moodBar" style="width:80%"></i></div></div>
+   </div>
+   <div class="side-section"><div class="side-title">探索</div><div class="navgrid">
+    <button class="navbtn active" data-place="汐隱館">汐隱館</button><button class="navbtn" data-place="月代町">月代町</button>
+    <button class="navbtn" data-room="lobby">大廳</button><button class="navbtn" data-room="room">客房</button>
+    <button class="navbtn" data-room="onsen">溫泉</button><button class="navbtn" data-map="1">町地圖</button>
+   </div></div>
+   <div class="side-section"><div class="side-title">生活</div><div class="navgrid">
+    <button class="navbtn" data-action="休息">休息</button><button class="navbtn" data-action="用餐">用餐</button>
+    <button class="navbtn" data-action="泡湯">泡湯</button><button class="navbtn" data-action="整理">整理</button>
+   </div></div>
+   <div class="side-section"><div class="side-title">調查</div><button class="navbtn" style="width:100%" id="journalBtn">打開調查筆記</button></div>
+  </aside>
+
+  <main class="scene">
+   <div class="scene-bg" id="sceneBg"></div>
+   <div class="place-title"><b id="placeName">汐隱館・大廳</b><span id="placeSub">SHIOGAKUREKAN / LOBBY</span></div>
+   <div class="world" id="world">
+     <div class="actor player" id="playerActor"><span class="name" id="playerTag">Momo</span><img id="playerImg" src="player.png"></div>
+     <div class="actor npc" id="npcShu" data-npc="緒方修"><span class="name">緒方修</span><img src="修.png"></div>
+     <div class="actor npc" id="npcIori" data-npc="緒方伊織"><span class="name">緒方伊織</span><img src="伊織.png"></div>
+     <div class="actor npc" id="npcRetsu" data-npc="緒方烈"><span class="name">緒方烈</span><img src="烈.png"></div>
+   </div>
+   <div class="controlhint">WASD／方向鍵移動　・　靠近角色後按 E 對話</div>
+   <div class="actionbar"><button id="talkBtn">與附近的人交談</button><button id="searchBtn">調查周遭</button></div>
+   <div class="mobilebar"><button data-move="up">▲</button><button data-move="left">◀</button><button data-move="down">▼</button><button data-move="right">▶</button><button id="mobileTalk">對話</button></div>
+  </main>
+
+  <aside class="rightbar">
+   <div class="panel event-card"><b id="eventTitle">初湯迎客</b><p id="eventDesc">入住汐隱館，與伊織完成第一次正式接觸。</p></div>
+   <div class="panel"><h3>旅館今日作息</h3><div id="schedule"></div></div>
+   <div class="panel"><h3>最近紀錄</h3><div class="log" id="log"></div></div>
+   <div class="panel"><h3>線索 <span id="clueCount">0</span></h3><div class="log" id="clues"><p>目前沒有線索。世界會自己說話，慢慢找。</p></div></div>
+  </aside>
+ </div>
+</section>
+
+<div class="modal" id="dialogModal"><div class="dialog">
+ <div class="dialog-head"><img class="portrait" id="dialogPortrait"><div><h2 id="dialogName"></h2><div id="dialogRole" style="color:#c6a66e;font-size:12px"></div></div></div>
+ <div class="dialog-body" id="dialogText"></div><div class="choices" id="dialogChoices"></div>
+</div></div>
+
+<div class="modal map-modal" id="mapModal"><div class="dialog">
+ <div class="dialog-head"><div><h2>月代町</h2><div style="color:#bfaea4;font-size:12px">白天與夜晚會有不同的人與事件。</div></div><button class="secondary" style="margin-left:auto" id="closeMap">關閉</button></div>
+ <div style="padding:16px"><img class="map-img" src="town_map.jpeg"><div class="map-actions" id="mapActions"></div></div>
+</div></div>
+
+<div class="modal" id="journalModal"><div class="dialog">
+ <div class="dialog-head"><div><h2>調查筆記</h2><div style="color:#bfaea4;font-size:12px">你親手留下的細節。</div></div><button class="secondary" style="margin-left:auto" id="closeJournal">關閉</button></div>
+ <div class="dialog-body"><div id="journalFull"></div></div>
+</div></div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const AS={修:"修.png",伊織:"伊織.png",烈:"烈.png",player:"player.png",player_y:"player_yukata.png"};
+const backgrounds={
+ lobby:"lobby.jpeg", room:"room.jpeg", onsenDay:"onsen_day.jpeg", onsenNight:"onsen_night.jpeg", hotelDay:"hotel_day.jpeg", hotelNight:"hotel_night.jpeg"
+};
+const townPlaces=["月代老商店街","月代神社","潮見海岸","白岬燈台","月代朝市","湯煙坂","紅葉橋","月代茶寮","海風公園","山之湯步道"];
+const townDesc={
+"月代老商店街":"和菓子、喫茶、雜貨與老食堂聚集的老街。","月代神社":"山腰神社，可參拜、抽籤、買御守。","潮見海岸":"沿海散步，看夕陽與潮線。","白岬燈台":"能俯瞰整個月代町的白色燈台。","月代朝市":"海產、漬物、飯糰與地方早點。","湯煙坂":"連接汐隱館與商店街的石板坡道。","紅葉橋":"跨過山溪的小橋，秋天最漂亮。","月代茶寮":"提供抹茶、糰子、栗子甜點。","海風公園":"面海的休憩公園，適合發呆。","山之湯步道":"沿溫泉源頭上山的林間步道。"
+};
+const events=[
+["9/20","初湯迎客","入住、房間介紹、浴場與三兄弟初次登場。","伊織負責接待，修在房內確認茶水，烈從後方經過。三人的性格與分工開始浮現。"],
+["9/21","溫泉試湯","第一次使用汐隱館溫泉。","烈正在檢查泉水，發現你對水溫的反應有些不同。他的手溫異常偏低，卻只說山裡夜晚本來就冷。"],
+["9/22","庭院拾光","白天探索庭院，發現夜花與一張被風吹落的舊便箋。","修教你辨認庭院植物，順手替你把卡在樹枝上的便箋取下。字跡已經褪色，只剩一句：『潮來之前，別忘了關窗。』"],
+["9/23","茶房午後","在旅館茶房喝茶，第一次看見兄弟三人短暫聚在一起。","伊織替你端來茶點，修與烈在一旁為工作安排拌嘴，氣氛意外地像普通的一家人。"],
+["9/24","月代町初逛","第一次正式前往月代町。","老商店街的店主知道你住在汐隱館，笑著說：『那間旅館，晚上可別亂跑。』"],
+["9/25","雨後溫泉","雨後的露天溫泉格外安靜。","烈替你把落葉撥開，提醒你不要靠近一處被木欄圍起來的泉眼。"],
+["9/26","古館拾遺","探索舊館，發現老照片。","數十年前的家族照片裡，有與現在的伊織、烈極為相似的人。伊織看到後只說：『家族長得像，很正常。』"],
+["9/27","小小晚餐會","旅館今晚準備簡單晚餐，玩家可以主動幫忙。","修把最後一道菜交給你端上桌，烈在旁邊嫌擺盤太慢，伊織則偷偷把最好吃的一塊留給你。"],
+["9/28","月下庭院","夜間前往庭院，月光照著只在晚上盛開的花。","修陪你散步，談起植物習性時說得太過熟悉，卻笑著把話題帶開。"],
+["9/29","深夜聽潮","深夜聽見旅館深處傳來水聲。","你走到走廊盡頭，烈突然出現擋在前方：『那邊晚上不開放。』"],
+["9/30","旅館私湯之夜","旅館安排安靜的私人浴池時段。","修替你準備浴衣與茶點，氣氛罕見地悠閒。你發現浴池旁有一枚不屬於現代旅館的舊銅牌。"],
+["10/1","失落古籍","舊館角落找到殘破古籍。","頁面提到月代町、海、溫泉與古老儀式，其中『御饌』二字格外醒目，後半頁卻被撕走。"],
+["10/2","朝市小任務","在月代朝市替伊織採買旅館食材。","一位老攤販看見你手裡的旅館採買單，忽然收起笑容，說自己已經很久不接汐隱館的單了。"],
+["10/3","神社抽籤","前往月代神社抽籤。","籤文只有一句：『潮聲未止，客人莫回首。』神官卻若無其事地替你換成普通吉籤。"],
+["10/4","茶寮午後","與任一角色在月代茶寮吃甜點。","甜點店老闆提到，送潮祭前夕旅館通常會很忙。當你追問原因，他笑著轉移話題。"],
+["10/5","海風公園","午後散步到海風公園。","你發現海邊有一排濕腳印，卻沒有任何人影。回頭時，伊織正站在不遠處看著海。"],
+["10/6","古館深處","取得進入舊館更深處的機會。","老木門後藏著一間沒有對外開放的房間，牆上掛著歷代旅館主人的畫像。"],
+["10/7","禁忌藥湯","修帶你進入旅館深處的特殊浴池。","池水的溫度與普通溫泉不同。修始終觀察你的反應，卻不肯說明這個池子真正的用途。"],
+["10/8","月代町夜遊","夜間與修、伊織、烈或直哉之一探索月代町。","居民談起『緒方家一直都在』，也有人提過過去曾有旅客住進旅館後再也沒有回來。"],
+["10/9","潮聲之夜","送潮祭前夕，海潮與旅館溫泉出現異常。","三兄弟同時離開旅館。修失去笑意，伊織反覆確認時間，烈直接前往地下區域。海面傳來低沉聲響。"],
+["10/10","送潮祭前夜","月代町準備迎接送潮祭。","所有線索開始彼此咬合。這不是結局，而是故事真正開始之前，最後一次可以自由選擇的夜晚。"]
+];
+const npcInfo={
+"緒方修":{role:"汐隱館主人／長兄",img:AS.修,base:{lobby:[69,67],room:[18,30],onsen:[76,55],town:[35,45]},lines:["歡迎回來。今天的旅館很安靜，正適合四處走走。","你可以隨意探索，只是有些門……暫時不要打開。","別擔心，我只是比較習慣把事情掌握在手裡。"]},
+"緒方伊織":{role:"旅館接待／次兄",img:AS.伊織,base:{lobby:[36,66],room:[82,28],onsen:[45,55],town:[65,48]},lines:["需要幫忙嗎？第一次來月代町，很容易走錯路。","如果想喝茶，我可以替你準備。","哥哥們有時候太忙，你不用太在意他們的怪脾氣。"]},
+"緒方烈":{role:"溫泉與設備管理／三弟",img:AS.烈,base:{lobby:[52,40],room:[62,72],onsen:[28,60],town:[45,70]},lines:["別靠近那邊。地面濕，容易滑。","溫泉的事情交給我。你只要照規矩使用就好。","……你又在找什麼？這裡沒有什麼好看的。"]}
+};
+const state={
+playerName:"Momo",month:9,day:20,hour:15,minute:30,place:"汐隱館",room:"lobby",
+energy:90,hunger:75,clean:85,mood:80,money:12000,
+player:{x:50,y:78},clues:[],journal:[],visited:[],likes:{"緒方修":0,"緒方伊織":0,"緒方烈":0},
+eventDone:{},started:false
+};
+let keys={}, npcPos={}, lastTick=performance.now(), eventPopupShown=false;
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.classList.remove("show"),2200)}
+function save(){localStorage.setItem("momo_shiogakurekan_save",JSON.stringify(state));toast("進度已保存。")}
+function loadSave(){try{const s=JSON.parse(localStorage.getItem("momo_shiogakurekan_save"));if(s){Object.assign(state,s);return true}}catch(e){}return false}
+function dateKey(){return `${state.month}/${state.day}`}
+function timeText(){return `${String(state.hour).padStart(2,"0")}:${String(state.minute).padStart(2,"0")}`}
+function currentEvent(){return events.find(e=>e[0]===dateKey())||events[0]}
+function addLog(t){state.journal.unshift({time:`${dateKey()} ${timeText()}`,text:t});state.journal=state.journal.slice(0,80)}
+function addClue(t){if(!state.clues.some(c=>c.text===t)){state.clues.unshift({time:`${dateKey()} ${timeText()}`,text:t});addLog("發現線索："+t)}}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function isNight(){return state.hour>=18 || state.hour<6}
+function advance(mins,reason=""){let oldDay=state.day;let total=state.hour*60+state.minute+mins;while(total>=1440){total-=1440;if(state.month===9){state.day++;if(state.day>30){state.month=10;state.day=1}}else if(state.day<10)state.day++;state.energy=clamp(state.energy+55,0,100);state.hunger=clamp(state.hunger-10,0,100);addLog("新的一天開始。月代町仍在自己的節奏裡運轉。");}state.hour=Math.floor(total/60);state.minute=total%60;state.energy=clamp(state.energy-Math.ceil(mins/70),0,100);state.hunger=clamp(state.hunger-Math.ceil(mins/100),0,100);state.clean=clamp(state.clean-Math.ceil(mins/180),0,100);if(reason)addLog(reason);render();checkDailyEvent()}
+function bgFor(){if(state.place==="月代町")return "town_map.jpeg";if(state.room==="room")return backgrounds.room;if(state.room==="onsen")return isNight()?backgrounds.onsenNight:backgrounds.onsenDay;if(state.room==="lobby")return backgrounds.lobby;return isNight()?backgrounds.hotelNight:backgrounds.hotelDay}
+function render(){ $("dateText").textContent=`${state.month}月${state.day}日`;$("clock").textContent=timeText();$("money").textContent=`¥ ${state.money.toLocaleString()}`;$("playerTag").textContent=state.playerName;
+ $("energyVal").textContent=Math.round(state.energy);$("hungerVal").textContent=Math.round(state.hunger);$("cleanVal").textContent=Math.round(state.clean);$("moodVal").textContent=Math.round(state.mood);
+ ["energy","hunger","clean","mood"].forEach(k=>$(k+"Bar").style.width=state[k]+"%");
+ const ev=currentEvent();$("eventPill").textContent=`今日事件：${ev[1]}`;$("eventTitle").textContent=ev[1];$("eventDesc").textContent=ev[2];
+ $("sceneBg").style.backgroundImage=`url("${bgFor()}")`; $("placeName").textContent=state.place==="月代町"?"月代町":`汐隱館・${state.room==="lobby"?"大廳":state.room==="room"?"客房":"露天溫泉"}`;$("placeSub").textContent=state.place==="月代町"?"TSUKISHIRO TOWN":`SHIOGAKUREKAN / ${state.room.toUpperCase()}`;
+ $("playerImg").src=isNight()?AS.player:AS.player;
+ renderNPCs();renderSchedule();renderLogs();renderNav()
+}
+function renderNav(){document.querySelectorAll(".navbtn[data-place]").forEach(b=>b.classList.toggle("active",b.dataset.place===state.place));}
+function routine(name){let h=state.hour;if(name==="緒方修"){if(h<9)return["客房","準備工作"];if(h<12)return["大廳","接待與巡館"];if(h<15)return["月代茶寮","處理旅館採買"];if(h<19)return["大廳","處理旅館事務"];return["庭院","夜間巡館"]}if(name==="緒方伊織"){if(h<8)return["客房","休息"];if(h<12)return["大廳","接待客人"];if(h<15)return["月代町","採買與送貨"];if(h<20)return["茶房","整理帳務"];return["大廳","晚間接待"]}if(h<10)return["設備間","檢查溫泉"];if(h<14)return["露天溫泉","維護泉水"];if(h<18)return["月代町","補充旅館用品"];return["設備間","檢查設備"]}
+function routinePos(name){let r=routine(name)[0];if(state.place==="汐隱館"){if(r==="大廳")return npcInfo[name].base.lobby;if(r==="客房")return npcInfo[name].base.room;if(r==="露天溫泉"||r==="設備間")return npcInfo[name].base.onsen;if(r==="庭院")return [78,26];return npcInfo[name].base.lobby}return npcInfo[name].base.town}
+function renderNPCs(){for(const [name,id] of [["緒方修","npcShu"],["緒方伊織","npcIori"],["緒方烈","npcRetsu"]]){const el=$(id);if(state.place==="月代町" && routine(name)[0]!=="月代町"){el.style.display="none";continue}el.style.display="block";let p=routinePos(name);npcPos[name]=p;el.style.left=p[0]+"%";el.style.top=p[1]+"%";el.querySelector(".name").textContent=name;el.classList.remove("near")}let p=$("playerActor");p.style.left=state.player.x+"%";p.style.top=state.player.y+"%";if(state.room==="room"||state.room==="onsen"){$("npcIori").style.display="none"}}
+function renderSchedule(){let names=Object.keys(npcInfo);$("schedule").innerHTML=names.map(n=>{let r=routine(n);return `<p style="margin:7px 0;font-size:11px"><b>${n}</b><br><span style="color:#cbbdb5">${r[0]} · ${r[1]}</span></p>`}).join("")}
+function renderLogs(){let l=state.journal.slice(0,6);$("log").innerHTML=l.length?l.map(x=>`<p><time>${x.time}</time>${x.text}</p>`).join(""):"<p>旅程才剛開始。</p>";$("clues").innerHTML=state.clues.length?state.clues.slice(0,6).map(x=>`<p class="clue"><time>${x.time}</time>${x.text}</p>`).join(""):"<p>目前沒有線索。世界會自己說話，慢慢找。</p>"}
+function setRoom(r){state.place="汐隱館";state.room=r;state.player={x:50,y:78};advance(10,"前往旅館的"+(r==="lobby"?"大廳":r==="room"?"客房":"溫泉")+"。");render()}
+function goTown(){state.place="月代町";state.room="town";state.player={x:50,y:80};advance(25,"離開汐隱館，前往月代町。");state.visited.push("月代町");render();openMap()}
+function openMap(){ $("mapModal").classList.add("show");$("mapActions").innerHTML=townPlaces.map(p=>`<button data-town="${p}">${p}</button>`).join("");document.querySelectorAll("[data-town]").forEach(b=>b.onclick=()=>townVisit(b.dataset.town))}
+function townVisit(p){$("mapModal").classList.remove("show");state.place="月代町";state.room=p;state.player={x:50,y:80};advance(15,`抵達「${p}」。`);if(!state.visited.includes(p))state.visited.push(p);const clueMap={"月代老商店街":"店主提到，汐隱館偶爾會有客人提前離開，卻很少有人問為什麼。","月代神社":"神社的繪馬上有幾個被刮掉的名字。","潮見海岸":"沙灘上有一道不自然的濕痕，延伸到沒有浪花的地方。","紅葉橋":"橋下水聲很深，像溪流下方還有另一條水道。","月代茶寮":"店主提到送潮祭前夕旅館通常會特別忙。","山之湯步道":"石階旁有濕腳印，但泥土沒有留下正常的腳印。"};if(clueMap[p])addClue(clueMap[p]);toast("抵達："+p);render()}
+function nearestNPC(){let best=null,dist=999;for(const [name,p] of Object.entries(npcPos)){const el=$(name==="緒方修"?"npcShu":name==="緒方伊織"?"npcIori":"npcRetsu");if(el.style.display==="none")continue;let dx=state.player.x-p[0],dy=state.player.y-p[1],d=Math.hypot(dx,dy);if(d<dist){dist=d;best=name}}return dist<20?best:null}
+function talk(name){let c=npcInfo[name];state.likes[name]=clamp((state.likes[name]||0)+1,0,100);$("dialogPortrait").src=c.img;$("dialogName").textContent=name;$("dialogRole").textContent=c.role+" · 關係 "+state.likes[name];let line=c.lines[Math.floor(Math.random()*c.lines.length)];let extra="";if(name==="緒方修"&&state.day>=28)extra=" 他看了一眼遠處的海，笑意淡了些。";if(name==="緒方伊織"&&state.clues.length>=2)extra=" 他似乎知道你最近在調查什麼，但沒有主動追問。";if(name==="緒方烈"&&state.day>=29)extra=" 他的視線短暫落向旅館深處，像是在確認什麼。";$("dialogText").textContent=line+extra;$("dialogChoices").innerHTML=`<button class="choice" id="choice1">「我只是想多了解這裡。」</button><button class="choice" id="choice2">「你今天都在做什麼？」</button><button class="choice" id="closeDialog">先這樣吧。</button>`;$("dialogModal").classList.add("show");$("choice1").onclick=()=>{state.mood=clamp(state.mood+3,0,100);addLog(`與${name}聊了一會兒。`);$("dialogText").textContent="他沒有追問，只是把話題留在一些普通的日常。";$("dialogChoices").innerHTML=`<button class="choice" id="closeDialog">點點頭。</button>`;$("closeDialog").onclick=closeDialog;render()};$("choice2").onclick=()=>{$("dialogText").textContent=routine(name)[1]+"。有些人的一天，其實比旅館看起來忙得多。";$("dialogChoices").innerHTML=`<button class="choice" id="closeDialog">知道了。</button>`;$("closeDialog").onclick=closeDialog};$("closeDialog").onclick=closeDialog}
+function closeDialog(){$("dialogModal").classList.remove("show")}
+function checkDailyEvent(){let key=dateKey();if(state.eventDone[key])return;let ev=currentEvent();state.eventDone[key]=true;addLog(`今日事件「${ev[1]}」發生了。`);if(ev[1]==="古館拾遺")addClue("舊照片中的人物，與現在的家族成員有難以解釋的相似。");if(ev[1]==="深夜聽潮")addClue("旅館深處傳來不像普通溫泉的水聲。");if(ev[1]==="失落古籍")addClue("殘破古籍出現『御饌』二字，後半頁遭撕毀。");if(ev[1]==="潮聲之夜")addClue("海潮、地下水聲與溫泉水位同時出現異常。");if(state.day===20 && state.hour>=15){showEvent(ev)}else if(state.hour<2){showEvent(ev)}}
+function showEvent(ev){$("dialogPortrait").src=AS.修;$("dialogName").textContent=ev[1];$("dialogRole").textContent=`${dateKey()} · 汐隱館事件`;$("dialogText").textContent=ev[3];$("dialogChoices").innerHTML=`<button class="choice" id="eventClose">把這件事記進筆記。</button>`;$("dialogModal").classList.add("show");$("eventClose").onclick=()=>{closeDialog();render()}}
+function action(a){if(a==="休息"){advance(60,"你回房間休息了一會兒。");state.energy=clamp(state.energy+22,0,100);state.mood=clamp(state.mood+4,0,100)}if(a==="用餐"){if(state.money<900){toast("金錢不足。");return}state.money-=900;state.hunger=clamp(state.hunger+32,0,100);advance(35,"享用了汐隱館的晚餐。")}if(a==="泡湯"){state.clean=clamp(state.clean+18,0,100);state.mood=clamp(state.mood+10,0,100);advance(50,"泡了一會兒溫泉。");if(state.day>=25)addClue("最近幾次泡湯時，水溫似乎會在某些時刻微妙改變。")}if(a==="整理"){state.clean=clamp(state.clean+25,0,100);advance(20,"整理好房間與儀容。")}render()}
+function search(){advance(20,"你仔細調查周遭。");if(state.place==="汐隱館"){if(state.room==="lobby")addClue("大廳舊鐘的走時比手機慢了幾分鐘。");else if(state.room==="room")addClue("房間窗框內側刻著一個很小的浪紋。");else addClue("溫泉池邊的排水口偶爾傳來低沉水聲。")}else addClue("月代町的居民似乎都知道一些關於汐隱館的事，卻沒有人願意一次說完。");render()}
+function move(dx,dy){if(state.place==="月代町"){return}state.player.x=clamp(state.player.x+dx,8,92);state.player.y=clamp(state.player.y+dy,18,90);for(const [n,p] of Object.entries(npcPos)){let d=Math.hypot(state.player.x-p[0],state.player.y-p[1]);const el=$(n==="緒方修"?"npcShu":n==="緒方伊織"?"npcIori":"npcRetsu");el.classList.toggle("near",d<20)}}
+function openJournal(){ $("journalFull").innerHTML=(state.journal.length?state.journal.map(x=>`<p><time style="color:#b99868">${x.time}</time>　${x.text}</p>`).join(""):"<p>還沒有紀錄。</p>")+"<hr><h3>線索</h3>"+(state.clues.length?state.clues.map(x=>`<p class='clue'>${x.text}</p>`).join(""):"<p>尚無線索。</p>");$("journalModal").classList.add("show")}
+function start(){state.started=true;addLog("入住汐隱館。伊織負責接待，你第一次看見緒方家的三兄弟。");state.eventDone["9/20"]=true;showEvent(events[0]);$("title").classList.remove("active");$("game").classList.add("active");render()}
+$("startBtn").onclick=()=>{$("namebox").style.display="block";$("nameInput").focus()}
+$("confirmName").onclick=()=>{state.playerName=$("nameInput").value.trim()||"Momo";start()}
+$("saveBtn").onclick=save;
+document.querySelectorAll(".navbtn[data-place]").forEach(b=>b.onclick=()=>b.dataset.place==="月代町"?openMap():setRoom("lobby"));
+document.querySelectorAll("[data-room]").forEach(b=>b.onclick=()=>setRoom(b.dataset.room));
+document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>action(b.dataset.action));
+$("[data-map]").onclick=openMap;$("closeMap").onclick=()=>$("mapModal").classList.remove("show");$("journalBtn").onclick=openJournal;$("closeJournal").onclick=()=>$("journalModal").classList.remove("show");
+$("talkBtn").onclick=()=>{let n=nearestNPC();if(n)talk(n);else toast("附近沒有可以交談的人。")};$("mobileTalk").onclick=()=>{let n=nearestNPC();if(n)talk(n);else toast("附近沒有可以交談的人。")};$("searchBtn").onclick=search;
+document.querySelectorAll("[data-move]").forEach(b=>b.onpointerdown=e=>{let m=b.dataset.move;let v={up:[0,-4],down:[0,4],left:[-4,0],right:[4,0]}[m];move(v[0],v[1])});
+window.addEventListener("keydown",e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==="e"){let n=nearestNPC();if(n)talk(n)}});
+window.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+function loop(now){let dt=Math.min(.05,(now-lastTick)/1000);lastTick=now;let dx=0,dy=0;if(keys.w||keys.arrowup)dy-=45*dt;if(keys.s||keys.arrowdown)dy+=45*dt;if(keys.a||keys.arrowleft)dx-=45*dt;if(keys.d||keys.arrowright)dx+=45*dt;if(dx||dy)move(dx,dy);requestAnimationFrame(loop)}requestAnimationFrame(loop);
+setInterval(()=>{if(state.started&&$("game").classList.contains("active")){advance(5);if(state.hour===0&&state.minute<10)save()}},30000);
+if(loadSave()){toast("已找到上一份旅程存檔。");}
+</script>
+</body>
+</html>
